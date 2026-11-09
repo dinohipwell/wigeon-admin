@@ -22,7 +22,7 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ]
           },
           "configurations": {
@@ -56,7 +56,8 @@
               "buildTarget": "wigeon-admin:build:production"
             },
             "development": {
-              "buildTarget": "wigeon-admin:build:development"
+              "buildTarget": "wigeon-admin:build:development",
+              "port": 4300
             }
           },
           "defaultConfiguration": "development"
@@ -75,7 +76,7 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ]
           }
         }
