@@ -11,6 +11,7 @@ import { DatePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
 import { UserRolesPipe } from 'src/app/pipes/user-roles.pipe';
 import { UserRightsPipe } from 'src/app/pipes/user-rights.pipe';
+import { ServiceWorkerService } from '@services/service-worker.service';
 
 
 
@@ -28,7 +29,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   private windowService = inject(WindowService);
   private router = inject(Router);
-  // workerService = inject(ServiceWorkerService);
+  workerService = inject(ServiceWorkerService);
 
   private firebaseService = inject(FirebaseService);
 
@@ -110,23 +111,23 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/login');
   }
 
-  // addToHomeScreen() {
-  //   // hide our user interface that shows our A2HS button
-  //   this.stateService.showInstallButton = false;
-  //   // Show the prompt
-  //   this.stateService.deferredInstallPrompt.prompt();
-  //   // Wait for the user to respond to the prompt
-  //   this.stateService.deferredInstallPrompt.userChoice
-  //     .then((choiceResult: any) => {
-  //       if (choiceResult.outcome === 'accepted') {
-  //         // console.log('User accepted the A2HS prompt');
-  //       } else {
-  //         // console.log('User dismissed the A2HS prompt');
-  //         this.stateService.showInstallButton = true;
-  //       }
-  //       this.stateService.deferredInstallPrompt = null;
-  //     });
-  // }
+  addToHomeScreen() {
+    // hide our user interface that shows our A2HS button
+    this.stateService.showInstallButton = false;
+    // Show the prompt
+    this.stateService.deferredInstallPrompt.prompt();
+    // Wait for the user to respond to the prompt
+    this.stateService.deferredInstallPrompt.userChoice
+      .then((choiceResult: any) => {
+        if (choiceResult.outcome === 'accepted') {
+          // console.log('User accepted the A2HS prompt');
+        } else {
+          // console.log('User dismissed the A2HS prompt');
+          this.stateService.showInstallButton = true;
+        }
+        this.stateService.deferredInstallPrompt = null;
+      });
+  }
 
   // test() {
   //   this.firebaseService.getTestDoc$()

@@ -6,12 +6,6 @@ import { EnvConfigService } from './app/services/env-config.service';
 import { enableProdMode } from '@angular/core';
 
 
-const appInitializerFn = (envConfigService: EnvConfigService) => {
-  return () => {
-    return envConfigService.loadAppConfig();
-  };
-};
-
 if (environment.production) {
   enableProdMode();
 }

@@ -20,6 +20,8 @@ export class StateService implements OnDestroy {
   private router = inject(Router);
   private windowService = inject(WindowService);
 
+  public showInstallButton = false;
+  public deferredInstallPrompt: any;
 
   // public hasMouse = false;
   public userId = '';
