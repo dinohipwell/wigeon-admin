@@ -1,0 +1,211 @@
+<div class="wm-container-top wm-body-wide">
+
+  <div>
+    <h1 class="wm-title">Wigeon Land Management</h1>
+  </div>
+  <div class="wm-grid-row">
+
+    <div class="wm-col wm-col-sm-6">
+      <div class="wm-box wm-margin-s">
+        <img class="wm-home-img wm-float-left" src="assets/images/wigeon400.png" alt="Wigeon logo" />
+        <div class="wm-float-left wm-text-center">
+          @if (!localStorageOk) {
+          <div class="wm-alert-box wm-alert-box-info">Your browser site settings for privacy
+            and
+            security must
+            allow sites to save and read cookie (local storage) data to use this web site in logged in mode. Once this
+            has been allowed please refresh your browser for the changes to take effect. <small>Only names and scores
+              are
+              saved.</small>
+          </div>
+          }
+
+          <div class="wm-margin">
+            @if (isLoggedIn>0) {
+            <div>
+              <h5>{{stateService.userName}}</h5>
+              <h5 class="wm-darkgrey">{{dtToday | date: 'fullDate'}}</h5>
+              <h5 class="h6 wm-margin-t">User role: <b>{{stateService.userRole | userRoles}}</b></h5>
+              <h5 class="h6 wm-margin-t">User Rights: <b>{{stateService.userRights | userRights}}</b></h5>
+              <div>{{stateService.userEmail}}</div>
+            </div>
+            }
+          </div>
+        </div>
+        <div class="wm-float-clear"></div>
+      </div>
+    </div>
+
+
+    <!-- <div class="wm-col wm-col-sm-6">
+      <div class="wm-box wm-margin-s">
+        @if(isLoggedIn>0){
+        <div>
+          <button type="button" class="wm-btn wm-btn-sm wm-btn-outline-primary" (click)="login()">
+            User Account
+          </button>
+        </div>
+        }
+        @if (isLoggedIn===0){
+        @if(isOnline) {
+        <div>
+          <button type="button" class="wm-margin-t wm-btn wm-btn-lg wm-btn-success" (click)="login()">Login</button>
+        </div>
+        } @else {
+        <div>
+          <button type="button" class="wm-margin-t wm-btn wm-btn-lg wm-btn-success" (click)="login()">Offline
+            Login</button>
+        </div>
+
+        }
+        <div class="wm-alert-box wm-alert-box-warning">
+          You are not logged in
+        </div>
+
+        } @else if(isLoggedIn===1){
+
+
+        <div class="wm-text-center wm-alert-box wm-alert-box-warning">
+          @if(isOnline) {
+          Online
+          } @else {
+          Offline
+          }
+          but OFFLINE Logged so local data available only - will be auto syned with the online storage when you are
+          back online and fully logged in
+
+        </div>
+        @if(isOnline){
+        <div class="wm-text-center">
+          <button type="button" class="wm-btn wm-btn-lg wm-btn-success" (click)="login()">Online Login</button>
+        </div>
+        }
+
+        } @else {
+        @if(isOnline) {
+        <div class="wm-text-center wm-alert-box wm-alert-box-success">
+          Online and logged in - local data is kept in sync with the online storage
+        </div>
+        } @else {
+        <div class="wm-text-center wm-alert-box wm-alert-box-warning">
+          Logged in but offline so local data available only - will be auto syned with the online storage when you are
+          back online
+
+        </div>
+        }
+        }
+
+
+
+
+      </div>
+
+    </div> -->
+
+
+    <!-- @if (!displayModeStandalone) {
+    <div class="wm-col wm-col-sm-6">
+      <div class="wm-box wm-margin-s wm-text-center">
+        <div class="wm-alert-box wm-alert-box-info">
+          @if (stateService.showInstallButton) {
+          <button type="button" class="wm-btn wm-btn-primary" (click)="addToHomeScreen()">Add To Home
+            Screen</button>
+          }&nbsp;For all devices it is recommended to install on your home screen and then run from
+          there.
+        </div>
+      </div>
+    </div>
+    } -->
+
+
+
+    <div class="wm-col wm-col-sm-6">
+      <div class="wm-box wm-margin-s wm-text-center">
+        <div>
+          <h2 class="myH5">Help</h2>
+          <div class="wm-float-right">
+            <button type="button" class="wm-btn wm-btn-info" (click)="help()">Help</button>
+          </div>
+          <div class="wm-margin-r">
+            First iteration of help is a set of simple help docs giving guidance on the Wideon system. These will be
+            added to
+            and refined over time.
+          </div>
+
+          <div class="wm-float-clear"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- <div class="wm-col wm-col-sm-6">
+      <div class="wm-box wm-margin-s">
+        <div>
+
+          <div class="wm-margin-r wm-text-center">
+
+            Display mode: @if (!displayModeStandalone) {
+            <span>Web Browser Tab</span>
+            }@if (displayModeStandalone) {
+            <span>Progressive Web App</span>
+            }
+
+            <div class="wm-margin-sb">
+              <b>Build Type:</b> {{workerService.getBuildTypeName()}}&nbsp;&nbsp;&nbsp;<b>Version:</b>
+              {{workerService.codeVersion}} ({{workerService.codeSha}})
+            </div>
+
+            @if (!workerService.availableVersionSW && workerService.availableVersion &&
+            workerService.codeVersion!==workerService.availableVersion) {
+            <div class="wm-margin-st wm-alert-box wm-alert-box-info">
+              Available code version online ({{workerService.availableVersion}}) and is being prepped, please wait for
+              the green OK to update
+            </div>
+            }
+            @if (workerService.enabledSWCalled) {
+            <div class="wm-margin-st">
+              Service Worker is enabled and has been asked to check for an upgrade</div>
+            }
+            @if (!workerService.enabledSWCalled && workerService.calledSW) {
+            <div class="wm-margin-st wm-alert-box wm-alert-box-warning">
+              Service Worker is NOT enabled and so cannot check</div>
+            }
+
+            @if (workerService.availableVersionSW) {
+            <div class="wm-margin-st wm-alert-box wm-alert-box-success">
+              Service Worker has detected and prepared a new code version and needs to update to this as soon as
+              possible<br>
+              <button type="button" class="wm-btn wm-btn-sm wm-btn-success" (click)="update()">
+                Update Wigeon Now
+              </button>
+            </div>
+            }
+            @if (!workerService.availableVersionSW && workerService.enabledSWCalled && workerService.calledSW) {
+            <div class="wm-margin-st">
+              Service Worker has NOT reported a new version (yet)
+            </div>
+            }
+            @if (workerService.errMsg && isOnline) {
+            <div class="wm-alert-box wm-alert-box-warning">
+              Version service error: {{workerService.errMsg}}
+            </div>
+            }
+
+          </div>
+
+          <div class="wm-float-clear"></div>
+        </div>
+</div>
+      </div> -->
+
+
+
+
+
+
+
+  </div>
+  @if (error) {
+  <div class="wm-alert-box wm-alert-box-danger">{{error}}</div>
+  }
+  <!-- <app-toolbar-error></app-toolbar-error> -->
+</div>

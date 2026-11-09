@@ -1,0 +1,176 @@
+<div class="wm-container-top wm-body-medium wm-modal-component">
+  <div>
+    <div class="wm-modal-header">
+      <h4>
+        {{title}}
+
+        <button type="button" class="wm-btn wm-btn-sm wm-btn-outline-secondary wm-float-right" aria-label="Close"
+          (click)="ok()">
+          <i title="Close" class="ph-bold ph-arrow-fat-left wm-icon-18"></i>
+        </button>
+
+        @if (mode===2) {
+        <button type="button" class="wm-btn wm-btn-sm wm-btn-primary wm-float-right wm-margin-r" (click)="mode=0">
+          Login Again
+        </button>
+        }
+      </h4>
+    </div>
+    <div class="wm-modal-body">
+      @if(mode===2){
+      <div class="wm-alert-box wm-alert-box-success">
+        An email has been sent to you, please follow the link in it to change your passwsord and then click Login Again.
+      </div>
+      }@else if(mode===201){
+      <div class="wm-alert-box wm-alert-box-success">
+        Securely remember this PIN to login offline should you ever get caught out. This would allow you to continue
+        using local data only until such time as you can get online and login fully.<br><br>NB this PIN is only valid
+        until
+        another user logs in on this device.
+      </div>
+      <div class="wm-margin-dt wm-text-center">
+        For email: <b>{{stateService.userEmail}}</b>
+      </div>
+      <div class="wm-margin-t wm-text-center">
+        Offline PIN: <input disabled type="text" [ngModel]="offlinePassword" name="offpw"
+          class="wm-margin-r wm-width-100">
+        <button class="wm-btn wm-btn-sm wm-btn-outline-secondary" (click)="copyToClipBoard()"
+          title="Copy key to clipboard"><i class="ph-bold ph-copy wm-icon-24"></i></button>
+      </div>
+
+      } @else {
+
+      @if (mode<100) { <div class="text-center">
+        <div class="wm-alert-box wm-alert-box-info">
+          Cookie Policy - This web app uses cookies (local storage) to hold your local data allowing you to work
+          offline. By continuing to use this app you are consenting to cookies being used.@if (localStorageOk) {
+          <span><br>Cookies (local storage) are allowed by this
+            browser.</span>
+          }
+        </div>
+        @if (!localStorageOk) {
+        <div class="wm-alert-box wm-alert-box-danger">
+          Your browser site settings for privacy and security must allow sites to save and read cookie (local
+          storage)
+          data to use this app. Once this
+          has been allowed please refresh your browser for the changes to take effect.
+        </div>
+        }
+        @if (!isOnline) {
+        <div class="wm-alert-box wm-alert-box-warning">
+          @if(isLoggedIn===11){
+          This device is offline but you are logged in and as such may continue using local data until you are back
+          online at which time your data will auto sync with the online server.
+          }@else if(isLoggedIn===1){
+          This device is offline but you are OFFLINE logged in and as such may continue using local data until you
+          are
+          back online and can login fully.
+          } @else {
+          This device is offline and so offline login may be used to login as the last user.
+          }
+
+        </div>
+        } @else {
+
+        @if(isLoggedIn===11){
+        <div class="wm-alert-box wm-alert-box-success">
+          This device is online and you are logged in so local data is kept in sync with the online storage.
+        </div>
+
+        }@else if(isLoggedIn===1){
+        <div class="wm-alert-box wm-alert-box-warning">
+          This device is online but you are only OFFLINE logged in. Please login in fully now.
+        </div>
+        } @else {
+        <div class="wm-alert-box wm-alert-box-warning">
+          This device is online and so you may fully login now.
+        </div>
+        }
+
+
+        }
+    </div>
+    }
+
+    @if(isLoggedIn>0){
+    <div class="wm-margin-dl wm-margin-dt">
+      <h5>
+        {{stateService.userName}}
+        <button type="button" class="wm-btn wm-btn-outline-secondary wm-float-right" (click)="logout()">
+          Logout
+        </button>
+      </h5>
+      <h6 class="wm-margin-t">Email: <b>{{stateService.userEmail}}</b></h6>
+      <div class="wm-margin-dt">
+        <h6 class="wm-margin-t">User role: <b>{{stateService.userRole | userRoles}}</b></h6>
+        <h6 class="wm-margin-t">User rights: <b>{{stateService.userRights | userRights}}</b></h6>
+      </div>
+    </div>
+    <div class="wm-float-clear"></div>
+    }
+
+    @if(isLoggedIn<11){ <div class="wm-margin-dt wm-text-center wm-box">
+      <h5>New User</h5>
+      <div>
+        <small>
+          To request options for Wigeon sign up please email <a
+            onClick="javascript: window.open('mailto:adrian.hipwell@greatgreenfarm.co.uk', 'mail'); event.preventDefault()"
+            href="mailto:adrian.hipwell@greatgreenfarm.co.uk">adrian.hipwell&#64;greatgreenfarm.co.uk</a>
+        </small>
+        <div class="wm-alert-box-sm wm-alert-box-info">
+          Once you are authorised enter your email below and click Reset Password, follow the emailed link and you will
+          be able to log in.
+        </div>
+      </div>
+  </div>
+
+  <div class="wm-margin-dt wm-text-center wm-box">
+    <h5>Password Authentication</h5>
+    @if(isOnline){
+    <div class="wm-margin-st wm-margin-b">
+      <label class="wm-margin-l">
+        <input type="checkbox" [ngModel]="resetPin" (ngModelChange)="resetPin = $event" value="true" name="resetp">
+        Reset offline PIN (will be shown on logging in) <div class="wm-minor-text">Keep safe and use to login if you are
+          offline
+        </div>
+      </label>
+    </div>
+
+
+    <input type="email" [ngModel]="email" (ngModelChange)="email = $event" placeholder="Email" name="em2"
+      class=" wm-margin-r wm-width-250" maxlength="50">
+    <input type="password" [ngModel]="password" (ngModelChange)="password = $event" placeholder="Password" name="pw"
+      class="wm-margin-r wm-width-100" maxlength="50">
+    } @else {
+
+    <input type="email" [ngModel]="email" (ngModelChange)="email = $event" placeholder="Email" name="em2"
+      class=" wm-margin-r wm-width-250" maxlength="50">
+    <input type="text" [ngModel]="password" (ngModelChange)="password = $event" placeholder="Offline PIN" name="pw"
+      class="wm-margin-r wm-width-100" maxlength="50" autocomplete="off">
+    }
+    <button type="button" class="wm-btn wm-btn-primary wm-margin-r" [disabled]="!email || !password" (click)="login()">
+      @if(isOnline){
+      Login
+      }@else {
+      Offline Login <small>as the last user</small>
+      }
+    </button>
+    @if(isOnline){
+    <button type="button" class="wm-btn wm-btn-sm wm-btn-outline-secondary" [disabled]="!email" (click)="rePassword()"
+      title="An email will be sent to you with a link to follow enabling you to change your password">
+      Reset Password Request
+    </button>
+    }
+
+  </div>
+  }
+
+  }
+  <app-toolbar-error></app-toolbar-error>
+
+</div>
+
+
+</div>
+
+</div>
