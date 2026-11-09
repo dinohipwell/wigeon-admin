@@ -9,8 +9,8 @@ import { FirebaseService } from 'src/app/services/firebase.service';
 import { DtoBusiness } from '../../classes/class-dto/business';
 import { DatePipe } from '@angular/common';
 import { Subscription } from 'rxjs';
-import { UserRolesPipe } from '../../pipes/user-roles.pipe';
-import { UserRightsPipe } from '../../pipes/user-rights.pipe';
+import { UserRolesPipe } from 'src/app/pipes/user-roles.pipe';
+import { UserRightsPipe } from 'src/app/pipes/user-rights.pipe';
 
 
 
@@ -24,13 +24,13 @@ import { UserRightsPipe } from '../../pipes/user-rights.pipe';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   public stateService = inject(StateService);
-  //public onlineService = inject(OnlineService);
+  public onlineService = inject(OnlineService);
 
   private windowService = inject(WindowService);
   private router = inject(Router);
   // workerService = inject(ServiceWorkerService);
 
-  // private firebaseService = inject(FirebaseService);
+  private firebaseService = inject(FirebaseService);
 
 
   public localStorageOk = true;
@@ -47,38 +47,38 @@ export class HomeComponent implements OnInit, OnDestroy {
   private connectionChanged$: Subscription;
   constructor() {
 
-    // this.localStorageOk = this.stateService.testLocalStorage();
-    // this.displayModeStandalone = this.stateService.displayModeStandalone();
-    // this.dtToday = new Date();
+    this.localStorageOk = this.stateService.testLocalStorage();
+    this.displayModeStandalone = this.stateService.displayModeStandalone();
+    this.dtToday = new Date();
 
 
-    // this.connectionChanged$ = this.onlineService.connectionChanged$.subscribe({
-    //   next: (data: boolean) => {
-    //     if (this.isOnline !== data) {
-    //       // if (data) {
-    //       //   // clear the error which would have been logged and check
-    //       //   this.workerService.checkVersionUpdateIfNeeded(false); // do not update so can see if needed
-    //       // }
-    //       this.isOnline = data;
-    //     }
-    //   }
-    // });
+    this.connectionChanged$ = this.onlineService.connectionChanged$.subscribe({
+      next: (data: boolean) => {
+        if (this.isOnline !== data) {
+          // if (data) {
+          //   // clear the error which would have been logged and check
+          //   this.workerService.checkVersionUpdateIfNeeded(false); // do not update so can see if needed
+          // }
+          this.isOnline = data;
+        }
+      }
+    });
 
-    // this.myLoggedOnChanged$ = this.stateService.loggedOnChanged$.subscribe({
-    //   next: (data: number) => {
-    //     this.isLoggedIn = data;
-    //     if (data < 1) {
-    //       this.item = null;
-    //     }
-    //   }
-    // });
+    this.myLoggedOnChanged$ = this.stateService.loggedOnChanged$.subscribe({
+      next: (data: number) => {
+        this.isLoggedIn = data;
+        if (data < 1) {
+          this.item = null;
+        }
+      }
+    });
 
   }
 
   ngOnInit() {
-    // this.windowService.scrollToTop()
-    // // important to be sure
-    // this.onlineService.checkUpdateOnlineStatus();
+    this.windowService.scrollToTop()
+    // important to be sure
+    this.onlineService.checkUpdateOnlineStatus();
 
   }
 
@@ -102,12 +102,12 @@ export class HomeComponent implements OnInit, OnDestroy {
 
 
   help() {
-    //  this.router.navigateByUrl('/help');
+    this.router.navigateByUrl('/help');
   }
 
 
   login() {
-    // this.router.navigateByUrl('/login');
+    this.router.navigateByUrl('/login');
   }
 
   // addToHomeScreen() {

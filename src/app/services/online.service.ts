@@ -68,19 +68,24 @@ export class OnlineService implements OnDestroy {
     // real online status may have changed
     // may be called from firebase if it gets an error
     if (window.navigator.onLine) {
+
+      this.endTimer();
+      this.internalConnectionChanged.next(true); // override
+
+      // adminfix as no web url exists
       // coming back online so check server which will also check authorisation and hence isLoggedIn
-      this.myHttp.getWeb<WebVersion>('/version.json').subscribe({
-        next: (data) => {
-          // this.availableVersion = data.semver; as used by service-worker
-          // back online so stop the watch
-          this.endTimer();
-          this.internalConnectionChanged.next(true); // override
-        }, error: (error: any) => {
-          // offline down the line so start a watch to see when back
-          this.startTimerWithDelay();
-          this.internalConnectionChanged.next(false);
-        }
-      });
+      // this.myHttp.getWeb<WebVersion>('/version.json').subscribe({
+      //   next: (data) => {
+      //     // this.availableVersion = data.semver; as used by service-worker
+      //     // back online so stop the watch
+      //     this.endTimer();
+      //     this.internalConnectionChanged.next(true); // override
+      //   }, error: (error: any) => {
+      //     // offline down the line so start a watch to see when back
+      //     this.startTimerWithDelay();
+      //     this.internalConnectionChanged.next(false);
+      //   }
+      // });
 
     } else {
       // stop the watch if one is on as device turned offline and we will know when back on\
