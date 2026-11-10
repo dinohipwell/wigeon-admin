@@ -52,15 +52,9 @@
         <div>
           <button type="button" class="wm-margin-t wm-btn wm-btn-lg wm-btn-success" (click)="login()">Login</button>
         </div>
-        } @else {
-        <div>
-          <button type="button" class="wm-margin-t wm-btn wm-btn-lg wm-btn-success" (click)="login()">Offline
-            Login</button>
-        </div>
-
         }
         <div class="wm-alert-box wm-alert-box-warning">
-          You are not logged in
+          You are not logged in@if(!isOnline) { and you are not online which is requuired to login and proceed}
         </div>
 
         } @else if(isLoggedIn===1){

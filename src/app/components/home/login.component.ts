@@ -36,12 +36,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 
 
   public title = 'Login';
-  public mode = 0;  // 0=online ready to start logging on 1-local login  201=process
+  public mode = 0;  // 0=online ready to start logging on 1-local login 2=request email password reset 201=show new offline password
 
   public info = 0;
   public localStorageOk = false;
   public isOnline = false;
-  public isLoggedIn = 0;
+  public isLoggedIn = 0;// 11 =logged in online  1=offline logged in
   public processingPassword = false
   public email = ''; // auto filled by html due to input type
   public password = ''; // ditto
@@ -85,16 +85,12 @@ export class LoginComponent implements OnInit, OnDestroy {
 
     this.localStorageOk = this.firebaseService.testLocalStorage();
     this.mode = 0;
-    if (this.isLoggedIn === 11) {
+    // if (this.isLoggedIn === 11) {
 
-    } else if (this.isLoggedIn === 1) {
-      if (this.isOnline) {
-        // go for proper login
-      } else {
-        this.mode = 1; // local login
-      }
+    // } else if (this.isLoggedIn === 1) {
 
-    }
+
+    // }
 
   }
 
@@ -128,7 +124,7 @@ export class LoginComponent implements OnInit, OnDestroy {
             this.stateService.spinnerHide();
             if (tup[0]) {
               this.offlinePassword = tup[1];
-              this.mode = 201;
+              this.mode = 201; // show new offline password
             } else {
               this.ok();
             }
@@ -176,17 +172,17 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
-  copyToClipBoard() {
+  // copyToClipBoard() {
 
-    if (this.offlinePassword) {
+  //   if (this.offlinePassword) {
 
-      navigator.clipboard.writeText(this.offlinePassword).then(x => {
+  //     navigator.clipboard.writeText(this.offlinePassword).then(x => {
 
-      }).catch((error) => {
-        // this.errorService.addError(0, 'Clipboard copying error - ' + error);
-      });
-    }
-  }
+  //     }).catch((error) => {
+  //       // this.errorService.addError(0, 'Clipboard copying error - ' + error);
+  //     });
+  //   }
+  // }
 
   ok() {
     this.router.navigateByUrl('/home');

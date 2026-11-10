@@ -103,6 +103,7 @@ export class StateService implements OnDestroy {
   }
 
   setIsLoggedIn(n: number) {
+    // 11 =logged in online  1=offline logged in
     if (this.isLoggedIn !== n) {
       this.isLoggedIn = n;
       if (n < 1) {

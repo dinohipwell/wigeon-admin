@@ -56,10 +56,10 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.connectionChanged$ = this.onlineService.connectionChanged$.subscribe({
       next: (data: boolean) => {
         if (this.isOnline !== data) {
-          // if (data) {
-          //   // clear the error which would have been logged and check
-          //   this.workerService.checkVersionUpdateIfNeeded(false); // do not update so can see if needed
-          // }
+          if (data) {
+            // clear the error which would have been logged and check
+            this.workerService.checkVersionUpdateIfNeeded(false); // do not update so can see if needed
+          }
           this.isOnline = data;
         }
       }
