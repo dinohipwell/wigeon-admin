@@ -1,3 +1,5 @@
+import { Timestamp } from "@angular/fire/firestore";
+
 export class FsUser {
   // 1 record per user as defined by email
   // Maximum rights and roles that Gateway records cannot go above
@@ -6,7 +8,7 @@ export class FsUser {
   email: string;
   displayName: string;
   orgId: string;
-  dt: Date;
+  dt: Timestamp;
   role: string;
   rights: number;
 
@@ -30,7 +32,7 @@ export class FsUser {
   constructor(userId: string = '', email: string = '', orgId: string = '', role: string = '', rights: number = 0, displayName: string = '') {
     this.email = email;
     this.orgId = orgId;
-    this.dt = new Date();
+    this.dt = null;
     this.role = role;
     this.rights = rights;
     this.userId = userId;

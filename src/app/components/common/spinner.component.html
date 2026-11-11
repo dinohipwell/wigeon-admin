@@ -1,0 +1,38 @@
+<style>
+  .spinner {
+    text-align: center;
+    padding: 20px;
+  }
+
+  .spinnertext {
+    margin-top: 20px;
+  }
+</style>
+@if(showMe) {
+<div class="wm-modal wm-modal-zindex-spinner wm-msg-box" tabindex="-1"
+  [class]="{'wm-spinner-fade-start': !shown, '.wm-spinner-box-fade-in': shown}">
+  <div class="wm-modal-body">
+    <div class="wm-text-right">
+      @if(showClose && spinnerProgress<1){ <button title="Close whirligig and try again" type="button"
+        class="wm-btn wm-btn-sm wm-btn-outline-warning" (click)="close()">
+        <i class="ph-bold ph-backspace wm-icon-18"></i>
+        </button>
+        }
+    </div>
+    <div class="spinner">
+      <div class="loader"></div>
+      <h5 class="spinnertext">{{spinnerText}}</h5>
+    </div>
+    <div class="wm-margin-dt">
+      @if (shown && spinnerProgress>-1) {
+      <h6 class="wm-margin-t wm-text-center">
+        <small>{{spinnerProgressText}}</small><br>
+        <progress [value]="spinnerProgress" max="100"></progress>
+      </h6>
+      }
+    </div>
+  </div>
+</div>
+<div class="wm-msg-box wm-msg-box-backdrop-spinner"
+  [class]="{'wm-msg-box-backdrop-start': !shown, 'wm-msg-box-backdrop-in': shown}"></div>
+}

@@ -21,7 +21,8 @@
               "src/sitemap.xml",
               "src/env.json",
               "src/version.json",
-              "src/manifest.webmanifest"{
+              "src/manifest.webmanifest",
+              {
                 "glob": "**/*",
                 "input": "public"
               }

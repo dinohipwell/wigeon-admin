@@ -1,0 +1,117 @@
+<div class="wm-container wm-body-very-wide wm-modal-component">
+  <div class="wm-css-form">
+    <div class="wm-modal-header">
+
+      <h5>
+        User Manager
+        @if (!editMode) {
+        <button title="Close and return" type="button" class="wm-btn wm-btn-sm wm-btn-outline-secondary wm-float-right"
+          aria-label="Cancel" (click)="close()">
+          <i class="ph-bold ph-arrow-fat-left wm-icon-18"></i>
+        </button>
+        }
+
+
+
+      </h5>
+    </div>
+    <div class="wm-float-clear"></div>
+    <div class="wm-modal-body">
+
+      @if (!isOnline) {
+      <div class="wm-alert-box wm-alert-box-warning">
+        <h5>Offline so cannot connect to Firestore DB</h5>
+      </div>
+      }
+
+      <div>
+        <label class="wm-margin-sr">User email:</label>
+        <input [disabled]="editMode" name="opn" [ngModel]="email" (ngModelChange)="email = $event" (change)="getList()"
+          type="email" class="wm-width-250 wm-margin-r" maxlength="50" />
+
+        <button [disabled]="!email" type="button" class="wm-btn wm-btn-sm wm-btn-primary" (click)="getList()">Refresh
+        </button>
+      </div>
+      @if(users){
+      <div class="wm-margin-dt">
+        <h6>User Record</h6>
+        <table class="wm-table">
+          <thead class="small">
+            <tr>
+              <th class="wm-scrollable">Email</th>
+              <th class="wm-scrollable">Name</th>
+              <th class="wm-scrollable">Created</th>
+              <th class="wm-scrollable">Role</th>
+              <th class="wm-scrollable">Rights</th>
+              <th class="wm-scrollable">Parent Enterprise</th>
+            </tr>
+          </thead>
+          <tbody class="small">
+            @for (n of users; track n.userId; let first=$first) {
+            <tr>
+              <td>{{n.email}}</td>
+              <td>{{n.displayName}}</td>
+              <td>{{n.dt.toDate()|date:'yyyy-MM-dd HH:mm'}}</td>
+              <td>{{n.role}}</td>
+              <td>{{n.rights}}</td>
+              <td>
+                @if(first && enterprise){
+                {{enterprise.name}}
+                }@else{
+                {{n.orgId}}
+                }
+              </td>
+
+            </tr>
+
+            }
+          </tbody>
+
+
+        </table>
+
+      </div>
+
+      @if(gateways){
+      <div class="wm-margin-dt">
+        <h6>Gateway Records</h6>
+        <table class="wm-table">
+          <thead class="small">
+            <tr>
+              <th class="wm-scrollable">Business</th>
+              <th class="wm-scrollable">Enterprise</th>
+              <th class="wm-scrollable">Role</th>
+              <th class="wm-scrollable">Rights</th>
+              <th class="wm-scrollable">Permissions</th>
+              <th class="wm-scrollable">Epoc</th>
+              <th class="wm-scrollable">Status</th>
+            </tr>
+          </thead>
+          <tbody class="small">
+            @for (g of gateways; track g.id) {
+            <tr>
+              <td>{{g.bId}}</td>
+              <td>{{g.orgId}}</td>
+              <td>{{g.role}}</td>
+              <td>{{g.rights}}</td>
+              <td>{{g.permissions}}</td>
+              <td>{{g.epoc}}</td>
+              <td>@if(!g.userId){Not activated}</td>
+
+            </tr>
+
+            }
+          </tbody>
+
+
+        </table>
+
+      </div>
+
+      }
+
+      }
+    </div>
+
+    <app-toolbar-error></app-toolbar-error>
+  </div>

@@ -2,7 +2,7 @@ import { Injectable, NgZone, inject } from '@angular/core';
 
 // import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { Firestore } from '@angular/fire/firestore';
-import { Auth } from '@angular/fire/auth';
+import { Auth, user } from '@angular/fire/auth';
 
 
 import { ActionCodeSettings, browserLocalPersistence, browserSessionPersistence, isSignInWithEmailLink, linkWithCredential, onAuthStateChanged, sendPasswordResetEmail, sendSignInLinkToEmail, signInWithEmailAndPassword, signInWithEmailLink, signInWithPopup, signOut, UserInfo, GoogleAuthProvider, User, EmailAuthProvider } from 'firebase/auth';// '@angular/fire/auth'; //
@@ -23,6 +23,7 @@ import { DB } from '../classes/static/db.static';
 import { EnvConfigService } from './env-config.service';
 import { FsGateway } from '../classes/class-dto/gateway';
 import { BusinessGroup, BusinessPickerItem, FsBusinessList } from '../classes/class-dto/business';
+import { idTokenResult } from '@angular/fire/auth-guard';
 
 declare const gapi: any;
 
@@ -73,23 +74,46 @@ export class FirebaseService {
 
 
 
+    // user(this.fireAuth)
+    //   .pipe(
+    //     switchMap((currentUser: User) => {
+    //       if (!currentUser) return of(null);
+    //       return from(currentUser.getIdTokenResult()).pipe(
+    //         map((token) => (token.claims['activeBId'] as string) || null)
+    //       );
+    //     })
+    //   )
+    //   .subscribe((claimTenantId) => {
+    //     let activeTenantId = '';
+    //     // if (claimTenantId && activeTenantId !== claimTenantId) {
+    //     //   activeTenantId=claimTenantId;
+    //     // }
+    //   });
 
-    onAuthStateChanged(this.fireAuth, (user) => {
+    onAuthStateChanged(this.fireAuth, (user: User) => {
       if (user) {
         // User is signed in or token was refreshed.
         // may be fired at the app start or page refresh
-        this.getAuthorisedUser$(user.uid).subscribe({
-          next: (data) => {
-            if (data === 1) {
-              this.stateService.setIsLoggedIn(11); // must set uid and email first
-            } else {
+
+        // get user defined token
+        from(user.getIdTokenResult()).pipe().subscribe((token) => {
+          // undefined if not in token
+          const b = token.claims['activeBId'];
+          const r = token.claims['rights'];
+
+          this.getAuthorisedUser$(user.uid).subscribe({
+            next: (data) => {
+              if (data === 1) {
+                this.stateService.setIsLoggedIn(11); // must set uid and email first
+              } else {
+                this.stateService.setIsLoggedIn(0);
+              }
+            }, error: (err: any) => {
+              // in list
               this.stateService.setIsLoggedIn(0);
             }
-          }, error: (err: any) => {
-            // in list
-            this.stateService.setIsLoggedIn(0);
-          }
-        }); // let error cscade
+          }); // let error cscade
+        });
 
       } else {
         this.stateService.setIsLoggedIn(0);

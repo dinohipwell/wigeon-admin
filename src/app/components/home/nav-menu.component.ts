@@ -28,7 +28,7 @@ export class NavMenuComponent {
   private lastUrl = '';
   public buildNum = 0;
   public buildName = '';
-  public modules: NavItem[] = [{ num: 1, path: '\home', name: 'Home' }, { num: 2, path: '\dashboard', name: 'Dashboard' }];
+  public modules: NavItem[] = [{ num: 1, path: '/home', name: 'Home' }, { num: 2, path: '/usermanager', name: 'User Manager' }];
 
 
   constructor() {
