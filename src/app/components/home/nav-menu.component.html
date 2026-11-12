@@ -1,0 +1,55 @@
+<!-- <style>
+  .navbar {
+    cursor: default;
+    padding: 0;
+  }
+
+  .nav-selected {
+    font-weight: 900 !important;
+    color: black !important;
+  }
+
+  .nav-unselected {
+    font-weight: lighter;
+    color: grey;
+  }
+
+  .nav-background {
+    background-color: white;
+  }
+
+  .nav-selected {
+    font-weight: 900 !important;
+    color: black !important;
+  }
+</style> -->
+<div class="wm-font-size-14">
+  <app-nav [title]="buildName" [items]="modules" [pickedNum]="stateService.currentModuleId" [stackedMaxWidth]="700"
+    [logoHeight]="logoHeight" (pickedItem)="pick($event)"></app-nav>
+</div>
+<!-- <nav class="navbar fixed-top navbar-expand-md wm-background-prod">
+  <a class="wm-margin-l wm-logo-font" href="home">
+    <img class="mt-0" src="assets/icons/icon-128x128.png" alt="Wigeon Land Management logo"
+      [style]="{'height': logoHeight + 'px'}" />
+    <span class="wm-margin-l">Wigeon<small class="wm-minor-text-danger"> {{buildName}}</small></span>
+  </a>
+  <button class="navbar-toggler navbar-toggler-right wm-margin-r wm-margin-st wm-margin-sb" type="button"
+    (click)="isNavbarOpen = !isNavbarOpen" aria-controls="navContent" aria-expanded="false"
+    aria-label="Toggle navigation">
+    <i class="ph-bold ph-list wm-icon-28"></i>
+  </button>
+
+  <div [ngbCollapse]="!isNavbarOpen" class="wm-margin-l collapse navbar-collapse text-nowrap" id="navContent"
+    [class]="{'wm-box': isNavbarOpen}">
+    <ul class="navbar-nav">
+      @for (mod of modulesService.modules; track mod.id) {
+      @if(mod.id<100 || stateService.isDeveloper){ <li class="nav-item palanquin-font">
+        <a class="nav-link" [class]="{'nav-selected': mod.id===stateService.currentModuleId}"
+          [routerLink]="mod.path">{{mod.name}}</a>
+        </li>
+        }
+        }
+    </ul>
+
+  </div>
+</nav> -->

@@ -16,13 +16,22 @@
             "browser": "src/main.ts",
             "tsConfig": "tsconfig.app.json",
             "assets": [
+              "src/favicon.ico",
+              "src/assets",
+              "src/sitemap.xml",
+              "src/env.json",
+              "src/version.json",
+              "src/manifest.webmanifest",
               {
                 "glob": "**/*",
                 "input": "public"
               }
             ],
+            "polyfills": [
+              "zone.js"
+            ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ]
           },
           "configurations": {
@@ -39,12 +48,25 @@
                   "maximumError": "8kB"
                 }
               ],
-              "outputHashing": "all"
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ],
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
               "optimization": false,
               "extractLicenses": false,
-              "sourceMap": true
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.local.ts"
+                }
+              ]
             }
           },
           "defaultConfiguration": "production"
@@ -56,7 +78,8 @@
               "buildTarget": "wigeon-admin:build:production"
             },
             "development": {
-              "buildTarget": "wigeon-admin:build:development"
+              "buildTarget": "wigeon-admin:build:development",
+              "port": 4300
             }
           },
           "defaultConfiguration": "development"
@@ -69,13 +92,21 @@
           "options": {
             "tsConfig": "tsconfig.spec.json",
             "assets": [
-              {
+              "src/favicon.ico",
+              "src/assets",
+              "src/sitemap.xml",
+              "src/env.json",
+              "src/version.json",
+              "src/manifest.webmanifest"{
                 "glob": "**/*",
                 "input": "public"
               }
             ],
+            "polyfills": [
+              "zone.js"
+            ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss"
             ]
           }
         }

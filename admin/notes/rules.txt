@@ -1,0 +1,219 @@
+
+
+// ==================================================
+// ORIGINAL
+// rules_version = '2';
+
+// // resource.data is existing data being retrieved
+// // request.resource.data is data being sent up
+// // where query request.query.filters request.query.keys
+
+// service cloud.firestore {
+//   match / databases / { database } / documents {
+
+//     function isAuth() {
+//       // You are authoorised
+//       return request.auth != null && request.auth.uid != null;
+//     }
+
+//     function isSystemAdmin() {
+//       return request.auth != null && get(/databases/$(database) / documents / users / $(request.auth.uid)).data.rights > 63;
+//     }
+
+//     function hasRights() {
+//       // Your gateway record for this business has access rights
+//       return get(/databases/$(database) / documents / gateway / $(request.auth.uid + request.path[6])).data.rights > 0;
+//     }
+
+//     function hasAgRightsA() {
+//       // Your gateway record for the destination business has access rights and role A for ag link
+//       let gw = get(/databases/$(database) / documents / gateway / $(request.auth.uid + request.path[6])).data;
+//       return gw != null && gw.rights >= 1 && gw.role == 'A';
+//     }
+
+//     function isUserOrgAdmin() {
+//       // Your users record has organisation admin rights
+//       // NB for a get / delete the request.resource is null
+//       let u = get(/databases/$(database) / documents / users / $(request.auth.uid)).data;
+//       return u.rights >= 8 && u.orgId == request.resource.data.orgId;
+//     }
+
+//     function isUserOrgAdminIntended() {
+//       // Your users record has organisation admin rights
+//       // NB for a get / delete the request.resource is null
+//       let u = get(/databases/$(database) / documents / users / $(request.auth.uid)).data;
+//       // intended record is resoure. without the request prefix
+//       return u.rights >= 8 && u.orgId == resource.data.orgId;
+//     }
+
+//     function isUserEnterprise(minRights) {
+//       // Your users record has organisation admin rights
+//       // NB for a get / delete the request.resource is null
+//       let gk = get(/databases/$(database) / documents / users / $(request.auth.uid)).data;
+//       return gk.rights >= minRights && gk.orgId == request.path[4];
+//     }
+
+//     // function isUserEnterpriseEmail(){
+//     // // Your users record has organisation admin rights
+//     // // NB for a get / delete the request.resource is null
+//     // let u = get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+//     // return u.rights >= 8 && u.orgId == request.resource.data.orgId;
+//     // }
+
+//     match / organisations / { docId } {
+//       // No one can edit pre made
+//       allow delete: if false;
+//       allow create: if false;
+//  	  	allow read: if isAuth();
+//       allow update: if false;
+//     }
+
+//     match / organisations / { docId } / businessList / { bId } {
+//       // Create if it's your (users) organisation
+//       // Update if you have a gateway record for yourself and this bId
+//       allow delete: if false;
+//       allow create: if isAuth()
+//         && get(/databases/$(database) / documents / users / $(request.auth.uid)).data.orgId == request.path[4];
+//  	    allow read: if isAuth();
+//       allow update: if isAuth()
+//         && exists(/databases/$(database) / documents / gateway / $(request.auth.uid + request.path[6]));
+//     }
+
+
+//     match / orgdata / { orgid } {
+//         // Can be created if authorised
+//       allow delete: if false;
+//  	  	allow read: if false;
+//       allow update: if false;
+//       allow create: if isAuth();
+
+//     }
+
+//     match / orgdata / { orgid } / bizdata / { bid } {
+//       // Can be created if authorised
+//       allow delete: if false;
+//  	  	allow read: if false;
+//       allow update: if false;
+//       allow create: if isAuth();
+//     }
+
+//     // match /orgdata/{orgid}/bizdata/{bid}/changesets/{document} {
+//     //      // use the count
+//     //  	allow list: if true;
+//     //   // && hasRights();
+
+//     //    }
+
+//     match / orgdata / { orgid } / bizdata / { bid } / changesets / { chsetid } {
+//       // Read write if your gateway record for this business has access rights
+//       allow delete: if false;
+//  	  allow read: if isAuth() && hasRights();
+//       allow create: if isAuth() && hasRights();
+//       allow update: if isAuth() && hasRights();
+//     }
+
+//     match / orgdata / { orgid } / bizdata / { bid } / changes / { changeid } {
+//       // Read write if your gateway record for this business has access rights
+//       allow delete: if false;
+//  	  	allow read: if isAuth() && hasRights();
+//       allow create: if isAuth() && hasRights();
+//       allow update: if isAuth() && hasRights();
+//     }
+
+//     function isGWCopyE() {
+//       // You are effectively changing a record do id by create new and then delete old in a batch
+//       return exists(/databases/$(database) / documents / gateway / $(request.auth.token.email + request.resource.data.bId));
+//     }
+
+//     function isGWCopyUid() {
+//       // You are effectively changing a record do id by create new and then delete old in a batch
+//       return exists(/databases/$(database) / documents / gateway / $(request.auth.uid + request.resource.data.bId));
+//     }
+
+//     match / gateway / { gatewayid } {
+//       // Create if it's your (users) organisation and you are an admin
+//       //   OR you are making it for your own authorised email and auth userId not anyone else
+//       //     AND there EXISTS one for your email and intended bId
+//       //
+//       // Delete if it's your (users) organisation and you are an admin
+//       //   OR no userId in db existing record and DB record email is your own authorised email - IE when you are accepting a share offer
+//       //
+//       // Update  if it's your (users) organisation and you are an admin
+
+//       allow delete: if isAuth()
+//         && (((resource.data.userId == '' || resource.data.userId == request.auth.uid) && request.auth.token.email == resource.data.email)
+//           || isUserOrgAdminIntended());
+//  	  	allow read: if isAuth();
+//       allow create: if isAuth() && ((request.auth.token.email == request.resource.data.email
+//         && (request.auth.uid == request.resource.data.userId && isGWCopyE())
+//         || (request.resource.data.userId == 'x' && isGWCopyUid()))
+//         || isUserOrgAdmin());
+//       allow update: if isAuth() && isUserOrgAdmin();
+
+//     }
+
+//     match / users / { userId } {
+//       // No one can query the collection
+//       allow list: if isSystemAdmin();
+//       allow delete: if isSystemAdmin();
+//       allow create: if isSystemAdmin();
+//  	  	allow get: if (isAuth() && request.auth.uid == request.path[4]);
+//       allow update: if isSystemAdmin;
+//     }
+
+//     match / test / { name } {
+//        allow get: if isAuth();
+//     }
+
+//     match / admin / { name } {
+//     	allow read: if false;
+//       allow write: if false;
+//     }
+
+//     match / enterprise / { orgid } / grid - generators / { document=**} {
+//     	allow read: if isAuth() && isUserEnterprise(1);
+//       allow write: if isAuth() && isUserEnterprise(2);
+//       allow delete: if isAuth() && isUserEnterprise(2);
+//     }
+
+//     match / enterprise / { orgid } / catalogues / { document=**} {
+//     	allow read: if isAuth() && isUserEnterprise(1);
+//       allow write: if isAuth() && isUserEnterprise(2);
+//       allow delete: if isAuth() && isUserEnterprise(2);
+//     }
+
+//     match / enterprise / { orgid } / phrases / { document=**} {
+//     	allow read: if isAuth() && isUserEnterprise(1);
+//       allow write: if isAuth() && isUserEnterprise(2);
+//       allow delete: if isAuth() && isUserEnterprise(2);
+//     }
+
+//     match / { path=**} / postboxes / { doc } {
+//       // Collection Group you are filtering only by your auth email
+//       allow list: if isAuth() && resource.data.fromEmail == request.auth.token.email;
+//     }
+
+//     match / enterprise / { orgid } / toBusinesses / { bId } / postboxes / { document=**} {
+//      // Read and Delete you have rights to this business either normal or it is an aglink collaborator to you
+//      // Write you are using your auth email and you have Ag link collaborator rights to business
+//       allow read: if isAuth() && hasRights();
+//       allow write: if isAuth() && hasAgRightsA() && request.auth.token.email == request.resource.data.fromEmail;
+//       allow delete: if isAuth() && hasRights();
+//     }
+
+//     match / { path=**} / messages / { doc } {
+//       // Collection Group you are filtering only by your auth email
+//       allow list: if isAuth() && resource.data.fromEmail == request.auth.token.email;
+//     }
+
+//     match / message - emails / { email } / messages / { document=**} {
+//      // Read and Delete you have rights to this business either normal or it is an aglink collaborator to you
+//      // Write you are using your auth email and logged in
+//       allow read: if isAuth() && request.auth.token.email == request.path[4];
+//       allow write: if isAuth() && request.auth.token.email == request.resource.data.fromEmail;
+//       allow delete: if isAuth() && (resource.data.toEmail == request.auth.token.email || resource.data.fromEmail == request.auth.token.email);
+//     }
+
+
+//   }
+// }

@@ -1,0 +1,51 @@
+<div class="wm-container-top wm-body-very-wide wm-modal-component">
+  <div>
+    <div class="wm-modal-header">
+      <h4>Help Guides <span class="wm-minor-text"> - A work in progress</span>
+        <button type="button" class="wm-btn wm-btn-sm wm-btn-outline-secondary wm-float-right" aria-label="Close"
+          (click)="close()">
+          <i title="Close" class="ph-bold ph-arrow-fat-left wm-icon-18"></i>
+        </button>
+      </h4>
+    </div>
+    <div class="wm-modal-body">
+
+      @if(info>0){
+      <div class="wm-alert-box wm-alert-box-danger">{{error}}</div>
+      }
+      <div class="wm-grid-row wm-margin-t">
+        <div class="wm-col wm-col-md-8 wm-col-lg-9">
+          @if(topicUrl){
+
+          <object width=100% height="600" type="application/pdf" [data]="topicUrl">
+            <p>PDF document cannot be displayed on this device</p>
+
+
+          </object>
+
+          }
+        </div>
+        <div class="wm-col wm-col-md-4 wm-col-lg-3">
+          <div>
+            <div>
+              @if(list){
+              <div class="wm-table-scrollable" [style]="{'height': '550px'}">
+                <table class="wm-table">
+                  <tbody class="small">
+                    @for(n of list; track n){
+                    <tr [class]="{'wm-selected': n.id===item?.id}">
+                      <td (click)="selectTopic(n)">{{n.name}}</td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

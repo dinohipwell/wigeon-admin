@@ -1,0 +1,66 @@
+<style>
+  .x-toolbarerror {
+    position: fixed;
+    z-index: 1980;
+    opacity: 0.8;
+    filter: alpha(opacity=80);
+    bottom: 50px;
+    left: 0;
+    padding: 2px;
+    width: 100%;
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+</style>
+@if (errorService.errorList ||errorService.errorDataList || errorService.errorTileList) {
+<div class="x-toolbarerror">
+  @if (errorService.errorList){
+  @for (n of errorService.errorList; track n.text; let last = $last) {
+  <div class="wm-alert-box"
+    [class]="{'wm-alert-box-danger': n.tpe===0, 'wm-alert-box-warning': n.tpe===1,'wm-alert-box-info': n.tpe===2,'wm-alert-box-success': n.tpe===3}">
+    @if (last) {
+    <div class="wm-float-right wm-margin">
+      <button (click)="$event.stopPropagation();close()" type="button"
+        class="wm-btn wm-btn-sm wm-btn-secondary">Dismiss</button>
+    </div>
+    }
+    <div class="wm-margin">
+      {{n.text}}
+    </div>
+  </div>
+  }
+  }
+  @if (errorService.errorDataList){
+  @for (n of errorService.errorDataList; track n.text; let last = $last) {
+  <div class="wm-alert-box"
+    [class]="{'wm-alert-box-danger': n.tpe===0, 'wm-alert-box-warning': n.tpe===1,'wm-alert-box-info': n.tpe===2,'wm-alert-box-success': n.tpe===3}">
+    @if (last) {
+    <div class="wm-float-right wm-margin">
+      <button (click)="$event.stopPropagation();close()" type="button"
+        class="wm-btn wm-btn-sm wm-btn-secondary">Dismiss</button>
+    </div>
+    }
+    <div class="wm-margin">
+      {{n.text}}
+    </div>
+  </div>
+  }
+  }
+  @if (errorService.errorTileList){
+  @for (n of errorService.errorTileList; track n; let last = $last) {
+  <div class="wm-alert-box wm-alert-box-danger">
+    @if (last) {
+    <div class="wm-float-right wm-margin">
+      <button (click)="$event.stopPropagation();close()" type="button"
+        class="wm-btn wm-btn-sm wm-btn-secondary">Dismiss</button>
+    </div>
+    }
+    <div class="wm-margin">
+      {{n}}
+    </div>
+  </div>
+  }
+  }
+  <div class="wm-float-clear"></div>
+</div>
+}

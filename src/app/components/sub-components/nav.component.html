@@ -1,0 +1,50 @@
+<div>
+  <nav class="wm-nav-bar-sub">
+    @if(logoHeight>0){
+    <div class="wm-nav-title">
+      <div class="wm-nav-title-inner">
+        <a class="wm-nav-logo-title" href="home">
+          <img class="wm-nav-logo-icon" src="assets/icons/icon-128x128.png" alt="Wigeon Admin logo"
+            [style]="{'height': logoHeight + 'px'}" />
+          <span class="wm-margin-l">Wigeon Admin<small class="wm-minor-text-danger"> {{title}}</small></span>
+        </a>
+      </div>
+    </div>
+    }@else if(title){
+    <div class="wm-nav-title">
+      <div class="wm-nav-title-inner">
+        {{title}}
+      </div>
+    </div>
+    }
+    @if(myWidth<=stackedMaxWidth){ <a class="wm-nav-item wm-nav-item-active" (click)="dropped=!dropped">
+      @if(dropped){
+      <i class="ph-bold ph-caret-up wm-icon-24 wm-align-middle"></i>
+      }@else{
+      {{activeName}}
+      <i class="ph-bold ph-caret-down wm-icon-24 wm-align-middle"></i>
+      }
+      </a>
+      @if(dropped){
+      <div class="wm-nav-bar-col">
+        @for (n of items; track n.num) {
+        <a class="wm-nav-drop-item" [class]="{'wm-nav-drop-item-selected':n.num===activeNum}" (click)="pick(n)">
+          {{n.name}}
+        </a>
+        }
+      </div>
+      }
+
+
+      } @else {
+      @for (n of items; track n.num) {
+      <a class="wm-nav-item" [class]="{'wm-nav-item-active':n.num===activeNum}" (click)="pick(n)">
+        {{n.name}}
+      </a>
+      }
+      }
+
+
+
+  </nav>
+</div>

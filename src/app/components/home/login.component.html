@@ -1,0 +1,119 @@
+<div class="wm-container-top wm-body-medium wm-modal-component">
+  <div>
+    <div class="wm-modal-header">
+      <h4>
+        {{title}}
+
+        <button type="button" class="wm-btn wm-btn-sm wm-btn-outline-secondary wm-float-right" aria-label="Close"
+          (click)="ok()">
+          <i title="Close" class="ph-bold ph-arrow-fat-left wm-icon-18"></i>
+        </button>
+
+        @if (mode===2) {
+        <button type="button" class="wm-btn wm-btn-sm wm-btn-primary wm-float-right wm-margin-r" (click)="mode=0">
+          Login Again
+        </button>
+        }
+      </h4>
+    </div>
+    <div class="wm-modal-body">
+      @if(mode===2){
+      <div class="wm-alert-box wm-alert-box-success">
+        An email has been sent to you, please follow the link in it to change your passwsord and then click Login Again.
+      </div>
+
+      } @else {
+
+      @if (mode<100) { <div class="text-center">
+        <div class="wm-alert-box wm-alert-box-info">
+          Cookie Policy - This web app uses cookies (local storage) to hold your local data allowing you to work
+          offline. By continuing to use this app you are consenting to cookies being used.@if (localStorageOk) {
+          <span><br>Cookies (local storage) are allowed by this
+            browser.</span>
+          }
+        </div>
+        @if (!localStorageOk) {
+        <div class="wm-alert-box wm-alert-box-danger">
+          Your browser site settings for privacy and security must allow sites to save and read cookie (local
+          storage)
+          data to use this app. Once this
+          has been allowed please refresh your browser for the changes to take effect.
+        </div>
+        }
+        @if (!isOnline) {
+        <div class="wm-alert-box wm-alert-box-warning">
+          @if(isLoggedIn===11){
+          This device is offline but you are logged in however you need to be online to use this app.
+          <!-- }@else if(isLoggedIn===1){
+          This device is offline but you are OFFLINE logged in and as such may continue using local data until you
+          are
+          back online and can login fully. -->
+          } @else {
+          This device is offline and must be online before you can log in.
+          }
+
+        </div>
+        } @else {
+
+        @if(isLoggedIn===11){
+        <div class="wm-alert-box wm-alert-box-success">
+          This device is online and you are logged in and able to proceed.
+        </div>
+
+        } @else {
+        <div class="wm-alert-box wm-alert-box-warning">
+          This device is online and so you may login now.
+        </div>
+        }
+
+
+        }
+    </div>
+    }
+
+    @if(isLoggedIn>0){
+    <div class="wm-margin-dl wm-margin-dt">
+      <h5>
+        {{stateService.userName}}
+        <button type="button" class="wm-btn wm-btn-outline-secondary wm-float-right" (click)="logout()">
+          Logout
+        </button>
+      </h5>
+      <h6 class="wm-margin-t">Email: <b>{{stateService.userEmail}}</b></h6>
+      <div class="wm-margin-dt">
+        <h6 class="wm-margin-t">User role: <b>{{stateService.userRole | userRoles}}</b></h6>
+        <h6 class="wm-margin-t">User rights: <b>{{stateService.userRights | userRights}}</b></h6>
+      </div>
+    </div>
+    <div class="wm-float-clear"></div>
+    }
+    @if(isLoggedIn<11 && isOnline){ <div class="wm-margin-dt wm-text-center wm-box">
+      <h5>Password Authentication</h5>
+
+      <input type="email" [ngModel]="email" (ngModelChange)="email = $event" placeholder="Email" name="em2"
+        class=" wm-margin-r wm-width-250" maxlength="50">
+      <input type="password" [ngModel]="password" (ngModelChange)="password = $event" placeholder="Password" name="pw"
+        class="wm-margin-r wm-width-100" maxlength="50">
+
+      <button type="button" class="wm-btn wm-btn-primary wm-margin-r" [disabled]="!email || !password"
+        (click)="login()">
+        Login
+      </button>
+
+      <button type="button" class="wm-btn wm-btn-sm wm-btn-outline-secondary" [disabled]="!email" (click)="rePassword()"
+        title="An email will be sent to you with a link to follow enabling you to change your password">
+        Reset Password Request
+      </button>
+
+  </div>
+  }
+
+  }
+  <app-toolbar-error></app-toolbar-error>
+
+</div>
+
+
+</div>
+
+</div>
