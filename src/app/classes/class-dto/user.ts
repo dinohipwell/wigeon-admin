@@ -1,5 +1,17 @@
 import { Timestamp } from "@angular/fire/firestore";
 
+export class FsClaim {
+  userRights: number;
+  userOrgId: string;
+  activeBId: string;
+  activeOrgId: string;
+  role: string;
+  rights: number;
+  linkedBId: string;
+
+
+}
+
 export class FsUser {
   // 1 record per user as defined by email
   // Maximum rights and roles that Gateway records cannot go above

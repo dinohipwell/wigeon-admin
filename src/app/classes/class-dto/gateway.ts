@@ -13,6 +13,7 @@ export class FsGateway {
   epoc: number; // 0=all -1= from last year -2=from 2 years agaon etc else is the fuzy harvest year to start getting data
   rights: number; // bit map initially as number 1 2 4 8 etc for speed of coding
 
+  dtn: number;
   // see Wigeon Online Firebase DB doc
   // rights
   // 0 None
@@ -32,5 +33,6 @@ export class FsGateway {
     this.rights = rights;
     this.userId = userId;
     this.epoc = epoc;
+    this.dtn = DB.getNowNumber();
   }
 }

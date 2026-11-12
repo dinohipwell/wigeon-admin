@@ -58,6 +58,14 @@ export class UserComponent implements OnInit, OnDestroy {
     }
   }
 
+  // updateGateways() {
+  //   this.service.renameGateways$().subscribe({
+  //     next: () => {
+  //       const t = 0;
+  //     }
+  //   });
+
+  // }
   // test() {
 
   //   this.service.getEmailNoUidGateway$('aaaaaaa')

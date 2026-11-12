@@ -13,7 +13,7 @@ import { collection, where, query, limit, QuerySnapshot, serverTimestamp, Timest
 import { catchError, concatMap, defaultIfEmpty, filter, first, forkJoin, from, map, mergeAll, mergeMap, observable, Observable, of, switchMap, takeUntil, throwError, expand, Subject, timer, scheduled, toArray, Subscription, retry } from 'rxjs';
 import { EMPTY } from 'rxjs';
 import { StateService } from './state.service';
-import { FsUser } from '../classes/class-dto/user';
+import { FsClaim, FsUser } from '../classes/class-dto/user';
 import { OnlineService } from './online.service';
 import { ErrorService, LoggedError } from './error.service';
 import { FsOrganisation, Organisation } from '../classes/class-dto/organisation';
@@ -97,9 +97,15 @@ export class FirebaseService {
 
         // get user defined token
         from(user.getIdTokenResult()).pipe().subscribe((token) => {
-          // undefined if not in token
-          const b = token.claims['activeBId'];
-          const r = token.claims['rights'];
+          // const fsClaim = {
+          //   userRights: token.claims['userRights'],
+          //   userOrgId: token.claims['userOrgId'],
+          //   activeBId: token.claims['activeBId'],
+          //   activeOrgId: token.claims['activeOrgId'],
+          //   rights: token.claims['rights'],
+          //   role: token.claims['role'],
+          //   linkedBId: token.claims['linkedBId'],
+          // } as FsClaim;
 
           this.getAuthorisedUser$(user.uid).subscribe({
             next: (data) => {
@@ -589,9 +595,7 @@ export class FirebaseService {
     try {
       return from(getDocsFromServer(query(collection(this.fireStoreDB, 'gateway'), where('userId', '==', ''), where('email', '==', email))))
         .pipe(
-          first(
-            // ends after the first record is returned
-          )
+          first()
           , map((doc) => {
             const data: FsGateway[] = [];
             doc.docs.forEach(d => data.push(d.data() as FsGateway));
@@ -610,14 +614,11 @@ export class FirebaseService {
     try {
       const em = this.stateService.userEmail;
       return forkJoin([
-        //this.angularFfireStore.collection<FsGateway>('gateway', ref => ref.where('userId', '==', this.stateService.userId)).valueChanges()
+
         from(getDocsFromServer(query(collection(this.fireStoreDB, 'gateway'), where('userId', '==', this.stateService.userId))))
           .pipe(
-            first(
-              // ends after the first record is returned
-            ) // not needed if no records doc.docs is empty array, defaultIfEmpty(null)
+            first()
             , mergeMap((doc: QuerySnapshot) => {
-              // return this.angularFfireStore.collection<FsGateway>('gateway', ref => ref.where('userId', '==', '').where('email', '==', this.stateService.userEmail)).valueChanges()
               return from(getDocsFromServer(query(collection(this.fireStoreDB, 'gateway'), where('email', '==', em), where('userId', '==', ''))))
                 .pipe(
                   first(
@@ -792,7 +793,7 @@ export class FirebaseService {
 
       // path is only for a record that has not been accepted yet
 
-      const gkDoc = doc(this.fireStoreDB, 'gateway', ((gateway.userId === '' || gateway.userId === 'x') ? gateway.email : gateway.userId) + gateway.bId);
+      const gkDoc = doc(this.fireStoreDB, 'gateway', gateway.id);
       batch.delete(gkDoc);
 
       // update shared count
@@ -817,35 +818,17 @@ export class FirebaseService {
     }
   }
 
-  addEditOnlineBusiness$(gateway: FsGateway, deleteOriginalGK: number, bl: FsBusinessList, originalEmail: string = ''): Observable<any> {
+  addEditOnlineBusiness$(gateway: FsGateway, bl: FsBusinessList): Observable<any> {
     const obs$: Observable<any>[] = [];
     try {
       const batch = writeBatch(this.fireStoreDB)
 
-      // When accepting a share offer you have to change the doc id from your email to your userId and this can only be done by
-      // creating a new similar doc and deleting the old. Rules ensure this only happens correctly
-      // Doc id = email + bId if no user Id IE this agteway is an offer to share not yet accepted OR userId + bId for normal records
-
       if (gateway) {
-        batch.set(doc(this.fireStoreDB, 'gateway', ((gateway.userId === '' || gateway.userId === 'x') ? gateway.email : gateway.userId) + gateway.bId), Object.assign({}, gateway));
+        batch.set(doc(this.fireStoreDB, 'gateway', gateway.id), Object.assign({}, gateway));
       }
 
       if (bl) {
         batch.set(doc(this.fireStoreDB, 'organisations', bl.orgId, 'businessList', bl.bId), Object.assign({}, bl));
-      }
-      if (deleteOriginalGK === 2) {
-        // delete before userId is added as replaced by the set above
-        // CAUTION this record must be deleted AFTER the set above as it is checked for in the rules to allow similar to be made
-        const gkDoc = doc(this.fireStoreDB, 'gateway', gateway.email + gateway.bId);
-        batch.delete(gkDoc);
-      } else if (deleteOriginalGK === 3) {
-        // handing back
-        const gkDoc = doc(this.fireStoreDB, 'gateway', this.stateService.userId + gateway.bId);
-        batch.delete(gkDoc);
-      } else if (deleteOriginalGK === 1) {
-        // handing back
-        const gkDoc = doc(this.fireStoreDB, 'gateway', originalEmail + gateway.bId);
-        batch.delete(gkDoc);
       }
 
       return from(batch.commit()).pipe(

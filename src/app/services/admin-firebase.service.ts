@@ -7,7 +7,7 @@ import { Auth } from '@angular/fire/auth';
 
 import { ActionCodeSettings, browserLocalPersistence, browserSessionPersistence, isSignInWithEmailLink, linkWithCredential, onAuthStateChanged, sendPasswordResetEmail, sendSignInLinkToEmail, signInWithEmailAndPassword, signInWithEmailLink, signInWithPopup, signOut, UserInfo, GoogleAuthProvider, User, EmailAuthProvider } from 'firebase/auth';// '@angular/fire/auth'; //
 
-import { collection, where, query, limit, QuerySnapshot, serverTimestamp, Timestamp, getDocsFromServer, orderBy, startAfter, setDoc, doc, writeBatch, getCountFromServer, getDoc, getDocFromServer } from 'firebase/firestore';// '@angular/fire/firestore';  //'firebase/firestore';  // If these are imported from '@angular/fire/firestore' you get warning called outside of injection context
+import { collection, where, query, limit, QuerySnapshot, serverTimestamp, Timestamp, getDocsFromServer, orderBy, startAfter, setDoc, doc, writeBatch, getCountFromServer, getDoc, getDocFromServer, runTransaction } from 'firebase/firestore';// '@angular/fire/firestore';  //'firebase/firestore';  // If these are imported from '@angular/fire/firestore' you get warning called outside of injection context
 
 
 import { catchError, concatMap, defaultIfEmpty, filter, first, forkJoin, from, map, mergeAll, mergeMap, observable, Observable, of, switchMap, takeUntil, throwError, expand, Subject, timer, scheduled, toArray, Subscription, retry } from 'rxjs';
@@ -131,6 +131,46 @@ export class AdminFirebaseService {
       return this.errorService.throwLoggedError$(this.errorService.processError(error, 'get this data to the online DB - enterprise list'));
     }
   }
+
+  renameGateways$(): Observable<FsGateway[]> {
+    try {
+      return from(getDocsFromServer(query(collection(this.fireStoreDB, 'gateway'))))
+        .pipe(
+          first()
+          , map(doc => {
+            doc.docs.forEach(dd => {
+              this.changeDocumentId('gateway', dd.id, dd.data()['id']);
+            });
+          })
+          , catchError((e: any) => this.fbOnlineCheckThrowLoggedError$(e, 'Cannot fetch Firestore business gateways')));
+    }
+    catch (error: any) {
+      return this.errorService.throwLoggedError$(this.errorService.processError(error, 'get this data to the online DB - enterprise list'));
+    }
+  }
+
+  async changeDocumentId(collectionName: string, oldId: string, newId: string) {
+    const oldDocRef = doc(this.fireStoreDB, collectionName, oldId);
+    const newDocRef = doc(this.fireStoreDB, collectionName, newId);
+
+    await runTransaction(this.fireStoreDB, async (transaction) => {
+      const oldDocSnap = await transaction.get(oldDocRef);
+      if (!oldDocSnap.exists()) {
+        throw new Error("Source document does not exist!");
+      }
+
+      const data = oldDocSnap.data();
+
+      // 1. Write data to the new document ID
+      transaction.set(newDocRef, data);
+
+      // 2. Delete the old document
+      transaction.delete(oldDocRef);
+    });
+    const t = 0;
+
+  }
+
 
   getGatewayList$(userId: string, email: string): Observable<FsGateway[]> {
     try {

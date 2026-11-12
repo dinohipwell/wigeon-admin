@@ -16,6 +16,8 @@
   },
   "compileOnSave": true,
   "include": [
-    "src"
+    "src",
+    "../admin/code/ideas.ts",
+    "index.ts"
   ]
 }
