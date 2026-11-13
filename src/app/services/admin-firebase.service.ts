@@ -23,6 +23,7 @@ import { DB } from '../classes/static/db.static';
 import { EnvConfigService } from './env-config.service';
 import { FsGateway } from '../classes/class-dto/gateway';
 import { BusinessGroup, BusinessPickerItem, FsBusinessList } from '../classes/class-dto/business';
+import { DateTimeConstants } from '../classes/static/constants';
 
 declare const gapi: any;
 
@@ -42,6 +43,20 @@ export class AdminFirebaseService {
 
   private isOnline = false;
   private isLoggedIn = 0;
+  // ------------------------------
+  private organisationsList: FsOrganisation[] = null;
+  // private fbGridGeneratorGotOnline = false;
+  private listGotDateO = 0;
+  // ------------------------------
+  private businessList: FsBusinessList[] = null;
+  private listGotDateB = 0;
+  private activeOrgId = '';
+  // ------------------------------
+  private gatewaysList: FsGateway[] = null;
+  private listGotDateG = 0;
+  private activeBId = '';
+  // ------------------------------
+
 
 
   constructor() {
@@ -73,45 +88,86 @@ export class AdminFirebaseService {
     return throwError(() => new LoggedError(x));
   }
 
-  // getEmailNoUidGateway$(email: string): Observable<FsGateway[]> {
-  //   try {
-  //     return from(getDocsFromServer(query(collection(this.fireStoreDB, 'gateway'), where('userId', '==', ''), where('email', '==', email))))
-  //       .pipe(
-  //         first(
-  //           // ends after the first record is returned
-  //         )
-  //         , map((doc) => {
-  //           const data: FsGateway[] = [];
-  //           doc.docs.forEach(d => data.push(d.data() as FsGateway));
-  //           return data;
-  //         })
-  //         , retry({ count: 2, delay: 2000 })
-  //         , catchError((e: any) => this.fbOnlineCheckThrowLoggedError$(e, 'Cannot fetch Firestore business gateways')));
-  //   }
-  //   catch (error: any) {
-  //     return this.errorService.throwLoggedError$(this.errorService.processError(error, 'get this data to the online DB - business gateways by email'));
-  //   }
-  // }
+  getOrganisationsList$(): Observable<FsOrganisation[]> {
+    // For different classes change data name from 'grid-generator' and table object must have - TAG AND NAME so Firestore index works
+    try {
 
-  // getUidBidGateway$(email: string): Observable<FsGateway[]> {
-  //   try {
-  //     return from(getDocsFromServer(query(collection(this.fireStoreDB, 'gateway'), where('userId', '==', 'xxx'), where('bId', '==', 'aaaaaaa'))))
-  //       .pipe(
-  //         first(
-  //           // ends after the first record is returned
-  //         )
-  //         , map((doc) => {
-  //           const data: FsGateway[] = [];
-  //           doc.docs.forEach(d => data.push(d.data() as FsGateway));
-  //           return data;
-  //         })
-  //         , retry({ count: 2, delay: 2000 })
-  //         , catchError((e: any) => this.fbOnlineCheckThrowLoggedError$(e, 'Cannot fetch Firestore business gateways')));
-  //   }
-  //   catch (error: any) {
-  //     return this.errorService.throwLoggedError$(this.errorService.processError(error, 'get this data to the online DB - business gateways by email'));
-  //   }
-  // }
+      if (this.isOnline && (this.listGotDateO === 0 || this.listGotDateO < DB.getMilliNowNumber() - DateTimeConstants.msInDay)) {
+        return from(getDocsFromServer(query(collection(this.fireStoreDB, 'organisations'))))
+          .pipe(
+            first()
+            , map(doc => {
+              this.organisationsList = doc.docs.map(d => d.data() as FsOrganisation);
+              this.organisationsList.sort((a, b) => a.name.localeCompare(b.name));
+              this.listGotDateO = DB.getMilliNowNumber();
+              return this.organisationsList;
+            }), retry({ count: 2, delay: 2000 })
+            , catchError((e: any) => this.fbOnlineCheckThrowLoggedError$(e, 'get organisations list from the Firestore online DB'))
+          );
+      } else {
+        // maybe null
+        return of(this.organisationsList);
+      }
+    } catch (e: any) {
+      return this.errorService.throwLoggedError$(this.errorService.processDataError(e, 'get organisations list'));
+    }
+
+  }
+
+  getBusinessList$(orgId: string): Observable<FsBusinessList[]> {
+    // For different classes change data name from 'grid-generator' and table object must have - TAG AND NAME so Firestore index works
+    try {
+
+      if (this.isOnline && (orgId !== this.activeOrgId || this.listGotDateB === 0 || this.listGotDateB < DB.getMilliNowNumber() - DateTimeConstants.msInDay)) {
+        return from(getDocsFromServer(query(collection(this.fireStoreDB, 'organisations', orgId, 'businessList'))))
+          .pipe(
+            first()
+            , map(doc => {
+              this.businessList = doc.docs.map(d => d.data() as FsBusinessList);
+              this.businessList.sort((a, b) => a.name.localeCompare(b.name));
+              this.listGotDateB = DB.getMilliNowNumber();
+              this.activeOrgId = orgId;
+              return this.businessList;
+            }), retry({ count: 2, delay: 2000 })
+            , catchError((e: any) => this.fbOnlineCheckThrowLoggedError$(e, 'get business list from the Firestore online DB'))
+          );
+      } else {
+        // maybe null
+        return of((orgId === this.activeOrgId) ? this.businessList : null);
+      }
+    } catch (e: any) {
+      return this.errorService.throwLoggedError$(this.errorService.processDataError(e, 'get business list'));
+    }
+
+  }
+
+  getGatewaysList$(bId: string): Observable<FsGateway[]> {
+    // For different classes change data name from 'grid-generator' and table object must have - TAG AND NAME so Firestore index works
+    try {
+
+      if (this.isOnline && (bId !== this.activeBId || this.listGotDateG === 0 || this.listGotDateG < DB.getMilliNowNumber() - DateTimeConstants.msInDay)) {
+        return from(getDocsFromServer(query(collection(this.fireStoreDB, 'gateway'), where('bId', '==', bId))))
+          .pipe(
+            first()
+            , map(doc => {
+              this.gatewaysList = doc.docs.map(d => d.data() as FsGateway);
+              this.gatewaysList.sort((a, b) => a.email.localeCompare(b.email));
+              this.listGotDateG = DB.getMilliNowNumber();
+              this.activeBId = bId;
+              return this.gatewaysList;
+            }), retry({ count: 2, delay: 2000 })
+            , catchError((e: any) => this.fbOnlineCheckThrowLoggedError$(e, 'get gateways list from the Firestore online DB'))
+          );
+      } else {
+        // maybe null
+        return of((bId === this.activeBId) ? this.gatewaysList : null);
+      }
+    } catch (e: any) {
+      return this.errorService.throwLoggedError$(this.errorService.processDataError(e, 'get gateways list'));
+    }
+
+  }
+
 
   getUsersByEmail$(email: string): Observable<FsUser[]> {
     try {

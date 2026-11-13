@@ -1,7 +1,129 @@
-<p>dashboard works!</p>
-<div>
+<div class="wm-container wm-body-very-wide wm-modal-component">
+  <div class="wm-css-form">
+    <div class="wm-modal-header">
+
+      <h5>
+        Enterprise Dashboard
+        @if (!editMode) {
+        <button title="Close and return" type="button" class="wm-btn wm-btn-sm wm-btn-outline-secondary wm-float-right"
+          aria-label="Cancel" (click)="close()">
+          <i class="ph-bold ph-arrow-fat-left wm-icon-18"></i>
+        </button>
+        }
 
 
-  <button type="button" class="wm-btn wm-btn-lg wm-btn-primary">Select Business</button>
 
-</div>
+      </h5>
+    </div>
+    <div class="wm-float-clear"></div>
+    <div class="wm-modal-body">
+
+      @if (!isOnline) {
+      <div class="wm-alert-box wm-alert-box-warning">
+        <h5>Offline so cannot connect to Firestore DB</h5>
+      </div>
+      }
+      <div class="wm-list-min-h">
+        @if(list){
+
+        <div class="wm-col wm-col-sm-4">
+          <div>
+            <label class="wm-margin-r">Enterprise:</label>
+            <app-drop-down [disabled]="editMode" [propId]="'docId'" [propIdList]="'docId'" [item]="item" [list]="list"
+              (pick)="selectOrganisation($event)"></app-drop-down>
+          </div>
+
+        </div>
+        }
+
+
+        @if(businessList){
+        <div class="wm-margin-dt">
+          <h6>Business List</h6>
+          <table class="wm-table">
+            <thead class="small">
+              <tr>
+                <th class="wm-scrollable"></th>
+                <th class="wm-scrollable">Name</th>
+                <th class="wm-scrollable">BId</th>
+                <th class="wm-scrollable">Shared</th>
+                <th class="wm-scrollable">status</th>
+
+              </tr>
+            </thead>
+
+            @for (n of businessList; track n.bId; let first=$first) {
+            <tbody class="small" [class]="{'wm-selected': foundItemId===n.bId}">
+              <tr>
+                <td>
+                  @if(n.bId===foundItemId){
+                  <button type="button" class="wm-btn wm-btn-xsm wm-btn-outline-primary wm-margin-r"
+                    (click)="displayBusiness(null)">
+                    <i class="ph-bold ph-arrow-fat-lines-up wm-icon-18"></i>
+                  </button>
+                  }@else {
+                  <button type="button" class="wm-btn wm-btn-xsm wm-btn-outline-primary wm-margin-r"
+                    (click)="displayBusiness(n)">
+                    <i class="ph-bold ph-arrow-fat-lines-down wm-icon-18"></i>
+                  </button>
+                  }
+                </td>
+                <td>{{n.name}}</td>
+                <td>{{n.bId}}</td>
+                <td>{{n.shared}}</td>
+                <td>{{n.status}}</td>
+
+              </tr>
+              @if(n.bId===foundItemId && gateways){
+              <tr>
+                <td colspan="9999">
+                  <div class="wm-margin-st">
+                    <h6>Gateway Records</h6>
+                    <table class="wm-table">
+                      <thead class="small">
+                        <tr>
+                          <th class="wm-scrollable">User Email</th>
+                          <th class="wm-scrollable">Role</th>
+                          <th class="wm-scrollable">Rights</th>
+                          <th class="wm-scrollable">Permissions</th>
+                          <th class="wm-scrollable">Epoc</th>
+                          <th class="wm-scrollable">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody class="small">
+                        @for (g of gateways; track g.id) {
+                        <tr>
+                          <td>{{g.email}}</td>
+                          <td>{{g.role}}</td>
+                          <td>{{g.rights}}</td>
+                          <td>{{g.permissions}}</td>
+                          <td>{{g.epoc}}</td>
+                          <td>@if(!g.userId){Not activated}</td>
+
+                        </tr>
+
+                        }
+                      </tbody>
+
+
+                    </table>
+
+                  </div>
+                </td>
+              </tr>
+              }
+            </tbody>
+            }
+
+
+          </table>
+
+        </div>
+
+
+
+        }
+      </div>
+    </div>
+    <app-toolbar-error></app-toolbar-error>
+  </div>

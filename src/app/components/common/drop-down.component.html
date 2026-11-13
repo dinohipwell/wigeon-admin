@@ -1,0 +1,94 @@
+<div class="wm-dropdown">
+  @if(list){
+  @if(isColour || isColourSimple){
+  <button [disabled]="disabled" class="wm-btn wm-btn-dropdown" [class]="btnClass" type="button" (click)="drop()"
+    [style]="{'background-color': item}">
+    {{item2}}
+    <i class="ph-bold ph-caret-down wm-icon-18 wm-align-middle"></i>
+  </button>
+  } @else if(isNote && item) {
+  <button [disabled]="disabled" class="wm-btn wm-btn-dropdown" [class]="btnClass" type="button" (click)="drop()">
+    {{item.dtn|date:'dd/MMM/yy'}} @if(item.linksCropZ.length>0){
+    {{item.linksCropZ[0].fuzzyName.substring(0,20)}}@if(item.linksCropZ.length>1){...}}
+    <i class="ph-bold ph-caret-down wm-icon-18 wm-align-middle"></i>
+  </button>
+  } @else {
+  <button [disabled]="disabled" class="wm-btn wm-btn-dropdown" [class]="btnClass" type="button" (click)="drop()">
+    @if(fixedBtnText){
+    @if(fixedBtnIcon===1){
+    <i class="ph-bold ph-plus wm-icon-24"></i>
+    }
+    {{fixedBtnText}}
+    }@else{
+    @if(item!==null){
+    @if(pipeObj){
+    {{pipeObj.transform(item)}}
+    } @else if(!propName){
+    @if(item){
+    {{item}}
+    } @else {
+    {{nullItemWord}}
+    }
+    }@else {
+    {{item[propName]}}
+    }
+    }@else{
+    {{nullItemWord}}
+    }
+    }
+    <i class="ph-bold ph-caret-down wm-icon-18 wm-align-middle"></i>
+  </button>
+  }
+  @if(isDropped){
+  <div class="wm-dropdown-menu">
+    <div [class]="{'wm-dropdown-scrollable-300': !height100, 'wm-dropdown-scrollable-100': height100}">
+      @if(pipeObj){
+      <!-- Number array -->
+      @for(h of list; track h){
+      <a class="wm-dropdown-item" (click)="picked(h)" [class]="{'selected':item!==null && item!==undefined && item===h}"
+        disabled>
+        {{pipeObj.transform(h)}}
+      </a>
+      }
+      } @else if(isColourSimple) {
+      @for(h of list; track h[propIdList]; let index=$index){
+      <a class="wm-dropdown-item" (click)="picked(h)" [class]="{'selected':item!==null && item!==undefined && item===h}"
+        [style]="{'background-color': h}">
+        {{list2[index]}}
+      </a>
+      }
+      } @else if(isColour) {
+      @for(h of list; track h[propIdList]; let index=$index){
+      <a class="wm-dropdown-item" (click)="picked(h)" [class]="{'selected':item!==null && item!==undefined && item===h}"
+        [style]="{'background-color': h}">
+        {{list2[index]}} {{h}}
+      </a>
+      }
+      } @else if(!propName){
+      @for(h of list; track h[propIdList]){
+      <a class="wm-dropdown-item" (click)="picked(h)"
+        [class]="{'selected':item!==null && item!==undefined && item===h}">
+        {{h}}
+      </a>
+      }
+      } @else {
+      @for(h of list; track h[propIdList]){
+      <a class="wm-dropdown-item" (click)="picked(h)"
+        [class]="{'selected':item && item[propId]===h[propIdList], 'minor':propNamegrey && h[propNamegrey]<0}">
+        {{h[propNameList]}}@if(propNameListMinor){
+        <span class="minor-text">
+          @if(pipeObjMinor){
+          {{pipeObjMinor.transform(h[propNameListMinor])}}
+          }@else{
+          {{h[propNameListMinor]}}
+          }
+        </span>
+        }
+      </a>
+      }
+      }
+    </div>
+  </div>
+  }
+  }
+</div>
